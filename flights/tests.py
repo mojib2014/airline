@@ -5,18 +5,19 @@ from .models import Airport, Flight, Passenger
 
 # Create your tests here.
 class FlightTestCase(TestCase):
+
     def setUp(self):
-        # Create airports
+
+        # Create airports.
         a1 = Airport.objects.create(code="AAA", city="City A")
         a2 = Airport.objects.create(code="BBB", city="City B")
 
-        # Create flights
+        # Create flights.
         Flight.objects.create(origin=a1, destination=a2, duration=100)
         Flight.objects.create(origin=a1, destination=a1, duration=200)
         Flight.objects.create(origin=a1, destination=a2, duration=-100)
 
-    # Tests
-    def test_departures_cout(self):
+    def test_departures_count(self):
         a = Airport.objects.get(code="AAA")
         self.assertEqual(a.departures.count(), 3)
 
@@ -64,7 +65,7 @@ class FlightTestCase(TestCase):
 
     def test_flight_page_passengers(self):
         f = Flight.objects.get(pk=1)
-        p = Passenger.objects.create(first="Mojib", last="Mohammad")
+        p = Passenger.objects.create(first="Alice", last="Adams")
         f.passengers.add(p)
 
         c = Client()
@@ -74,10 +75,9 @@ class FlightTestCase(TestCase):
 
     def test_flight_page_non_passengers(self):
         f = Flight.objects.get(pk=1)
-        p = Passenger.objects.create(first="Mojib", last="Mohammad")
-        
+        p = Passenger.objects.create(first="Alice", last="Adams")
+
         c = Client()
         response = c.get(f"/flights/{f.id}")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["non_passengers"].count(), 1)
-
